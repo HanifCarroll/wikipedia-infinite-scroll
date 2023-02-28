@@ -10,8 +10,6 @@ type Article = {
 };
 
 async function getRandomArticleIds(): Promise<number[]> {
-  let url = 'https://en.wikipedia.org/w/api.php?origin=*';
-
   const randomQueryParams: Params = {
     action: 'query',
     format: 'json',
@@ -19,18 +17,14 @@ async function getRandomArticleIds(): Promise<number[]> {
     rnnamespace: '0',
     rnlimit: '10',
   };
-
-  Object.keys(randomQueryParams).forEach(function (key) {
-    url += '&' + key + '=' + randomQueryParams[key];
-  });
-
+  const params = new URLSearchParams(randomQueryParams).toString();
+  const url = 'https://en.wikipedia.org/w/api.php?origin=*&' + params;
   const randomData = await fetch(url).then((res) => res.json());
-  const randomArticles = randomData.query.random;
-  return randomArticles.map((article: { id: number }) => article.id);
+
+  return randomData.query.random.map((article: { id: number }) => article.id);
 }
 
 async function getArticleInfoFromIds(articleIds: number[]): Promise<Article[]> {
-  let url = 'https://en.wikipedia.org/w/api.php?origin=*';
   const infoQueryParams: Params = {
     action: 'query',
     format: 'json',
@@ -42,9 +36,8 @@ async function getArticleInfoFromIds(articleIds: number[]): Promise<Article[]> {
     prop: 'extracts|pageimages|info',
     redirects: '1',
   };
-  Object.keys(infoQueryParams).forEach(function (key) {
-    url += '&' + key + '=' + infoQueryParams[key];
-  });
+  const params = new URLSearchParams(infoQueryParams).toString();
+  const url = 'https://en.wikipedia.org/w/api.php?origin=*&' + params;
   const articleData = await fetch(url).then((res) => res.json());
 
   return articleData.query.pages;

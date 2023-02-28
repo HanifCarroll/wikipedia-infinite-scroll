@@ -1,7 +1,70 @@
 import Head from 'next/head';
-export default function Home() {
-  const requestUrl = `https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnlimit=5&origin=*`;
 
+type Params = { [key: string]: string };
+
+type Article = {
+  canonicalurl: string;
+  displaytitle: string;
+  extract: string;
+  thumbnail?: { source: string };
+};
+
+async function getRandomArticleIds(): Promise<number[]> {
+  let url = 'https://en.wikipedia.org/w/api.php?origin=*';
+
+  const randomQueryParams: Params = {
+    action: 'query',
+    format: 'json',
+    list: 'random',
+    rnnamespace: '0',
+    rnlimit: '10',
+  };
+
+  Object.keys(randomQueryParams).forEach(function (key) {
+    url += '&' + key + '=' + randomQueryParams[key];
+  });
+
+  const randomData = await fetch(url).then((res) => res.json());
+  const randomArticles = randomData.query.random;
+  return randomArticles.map((article: { id: number }) => article.id);
+}
+
+async function getArticleInfoFromIds(articleIds: number[]): Promise<Article[]> {
+  let url = 'https://en.wikipedia.org/w/api.php?origin=*';
+  const infoQueryParams: Params = {
+    action: 'query',
+    format: 'json',
+    exintro: 'true',
+    explaintext: 'true',
+    inprop: 'url|displaytitle|preload',
+    pageids: articleIds.join('|'),
+    pithumbsize: '200',
+    prop: 'extracts|pageimages|info',
+    redirects: '1',
+  };
+  Object.keys(infoQueryParams).forEach(function (key) {
+    url += '&' + key + '=' + infoQueryParams[key];
+  });
+  const articleData = await fetch(url).then((res) => res.json());
+
+  return articleData.query.pages;
+}
+
+export async function getServerSideProps() {
+  const randomArticleIds = await getRandomArticleIds();
+  const randomArticleInfo = await getArticleInfoFromIds(randomArticleIds);
+
+  return {
+    props: { articles: randomArticleInfo },
+  };
+}
+
+type HomeProps = {
+  articles: Article[];
+};
+
+export default function Home({ articles }: HomeProps) {
+  console.log('articles', articles);
   return (
     <>
       <Head>

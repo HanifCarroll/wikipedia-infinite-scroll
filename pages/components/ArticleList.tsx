@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ArticleSummary } from '@/pages/components/Article';
-import { getRandomArticleInfo } from '@/utils';
 import { Article } from '@/types';
 
 type ArticleListProps = {
@@ -11,7 +10,9 @@ type ArticleListProps = {
 export function ArticleList({ articles, language }: ArticleListProps) {
   const [allArticles, setAllArticles] = useState<Article[]>(articles);
   const getData = async () => {
-    const newArticleData = await getRandomArticleInfo(language);
+    const newArticleData = await fetch(
+      `/api/getRandomArticleInfo?&language=${language}`
+    ).then((data) => data.json());
     setAllArticles([...allArticles, ...newArticleData]);
   };
 
@@ -22,7 +23,7 @@ export function ArticleList({ articles, language }: ArticleListProps) {
       loader={<h4>Loading...</h4>}
       dataLength={allArticles.length}
     >
-      <div className="flex flex-col items-center space-y-5">
+      <div className="flex flex-col items-center space-y-5 mt-10">
         {allArticles.map((article) => (
           <ArticleSummary
             key={article.pageid}

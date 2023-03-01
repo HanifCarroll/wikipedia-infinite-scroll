@@ -20,6 +20,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function Home({ articles }: HomeProps) {
   const router = useRouter();
+  // TODO: If language is not recognized, redirect to english.
+  // TODO: Create header with language options
 
   return (
     <>

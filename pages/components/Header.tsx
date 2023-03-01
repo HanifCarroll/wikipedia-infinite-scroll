@@ -1,3 +1,3 @@
 export function Header() {
-  return <header>Header</header>;
+  return <header className="fixed">Header</header>;
 }

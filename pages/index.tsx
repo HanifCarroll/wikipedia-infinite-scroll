@@ -15,7 +15,7 @@ type HomeProps = {
   articles: Article[];
 };
 
-async function getRandomArticleIds(): Promise<number[]> {
+export async function getRandomArticleIds(): Promise<number[]> {
   const randomQueryParams: Params = {
     action: 'query',
     format: 'json',
@@ -30,7 +30,9 @@ async function getRandomArticleIds(): Promise<number[]> {
   return randomData.query.random.map((article: { id: number }) => article.id);
 }
 
-async function getArticleInfoFromIds(articleIds: number[]): Promise<Article[]> {
+export async function getArticleInfoFromIds(
+  articleIds: number[]
+): Promise<Article[]> {
   const infoQueryParams: Params = {
     action: 'query',
     format: 'json',
@@ -49,12 +51,14 @@ async function getArticleInfoFromIds(articleIds: number[]): Promise<Article[]> {
   return Object.values(articleData.query.pages);
 }
 
-export async function getServerSideProps() {
+export async function getRandomArticleInfo() {
   const randomArticleIds = await getRandomArticleIds();
-  const randomArticleInfo = await getArticleInfoFromIds(randomArticleIds);
+  return getArticleInfoFromIds(randomArticleIds);
+}
 
+export async function getServerSideProps() {
   return {
-    props: { articles: randomArticleInfo },
+    props: { articles: await getRandomArticleInfo() },
   };
 }
 

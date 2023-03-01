@@ -1,12 +1,18 @@
 import Head from 'next/head';
+import { ArticleList } from '@/pages/components/ArticleList';
 
 type Params = { [key: string]: string };
 
-type Article = {
+export type Article = {
   canonicalurl: string;
   displaytitle: string;
   extract: string;
+  pageid: number;
   thumbnail?: { source: string };
+};
+
+type HomeProps = {
+  articles: Article[];
 };
 
 async function getRandomArticleIds(): Promise<number[]> {
@@ -32,7 +38,7 @@ async function getArticleInfoFromIds(articleIds: number[]): Promise<Article[]> {
     explaintext: 'true',
     inprop: 'url|displaytitle|preload',
     pageids: articleIds.join('|'),
-    pithumbsize: '200',
+    pithumbsize: '150',
     prop: 'extracts|pageimages|info',
     redirects: '1',
   };
@@ -40,7 +46,7 @@ async function getArticleInfoFromIds(articleIds: number[]): Promise<Article[]> {
   const url = 'https://en.wikipedia.org/w/api.php?origin=*&' + params;
   const articleData = await fetch(url).then((res) => res.json());
 
-  return articleData.query.pages;
+  return Object.values(articleData.query.pages);
 }
 
 export async function getServerSideProps() {
@@ -52,12 +58,7 @@ export async function getServerSideProps() {
   };
 }
 
-type HomeProps = {
-  articles: Article[];
-};
-
 export default function Home({ articles }: HomeProps) {
-  console.log('articles', articles);
   return (
     <>
       <Head>
@@ -66,7 +67,7 @@ export default function Home({ articles }: HomeProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>Hi</div>
+      <ArticleList articles={articles} />
     </>
   );
 }

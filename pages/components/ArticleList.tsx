@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ArticleSummary } from '@/pages/components/Article';
-import { Article, getRandomArticleInfo } from '@/pages';
+import { getRandomArticleInfo } from '@/utils';
+import { Article } from '@/types';
 
 type ArticleListProps = {
   articles: Article[];
+  language?: string;
 };
-export function ArticleList({ articles }: ArticleListProps) {
+export function ArticleList({ articles, language }: ArticleListProps) {
   const [allArticles, setAllArticles] = useState<Article[]>(articles);
   const getData = async () => {
-    const newArticleData = await getRandomArticleInfo();
+    const newArticleData = await getRandomArticleInfo(language);
     setAllArticles([...allArticles, ...newArticleData]);
   };
 

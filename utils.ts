@@ -1,12 +1,18 @@
 import { Article, Params } from '@/types';
 
-export async function getRandomArticleIds(language = 'en'): Promise<number[]> {
+export async function getRandomArticleIds({
+  language = 'en',
+  limit = 20,
+}: {
+  language?: string;
+  limit?: number;
+}): Promise<number[]> {
   const randomQueryParams: Params = {
     action: 'query',
     format: 'json',
     list: 'random',
     rnnamespace: '0',
-    rnlimit: '10',
+    rnlimit: limit.toString(),
   };
   const params = new URLSearchParams(randomQueryParams).toString();
   const url = `https://${language}.wikipedia.org/w/api.php?origin=*&` + params;
@@ -41,6 +47,24 @@ export async function getArticleInfoFromIds({
 }
 
 export async function getRandomArticleInfo(language = 'en') {
-  const randomArticleIds = await getRandomArticleIds(language);
-  return getArticleInfoFromIds({ articleIds: randomArticleIds, language });
+  let articles: Article[] = [];
+  const limit = 10;
+
+  while (articles.length < limit) {
+    const randomArticleIds = await getRandomArticleIds({
+      language,
+      // Retrieve more IDs than we need to show so that we don't have to make
+      // many requests if the results don't have thumbnails.
+      limit: limit * 3,
+    });
+    const articlesInfo = await getArticleInfoFromIds({
+      articleIds: randomArticleIds,
+      language,
+    });
+    articles = articles
+      .concat(articlesInfo)
+      .filter((article) => article.thumbnail);
+  }
+
+  return articles.slice(0, limit);
 }

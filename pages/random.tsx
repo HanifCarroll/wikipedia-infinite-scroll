@@ -5,6 +5,7 @@ import { Article, Language } from '@/types';
 import { getRandomArticleInfo } from '@/utils';
 import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
+import languages from '../languages.json';
 
 type HomeProps = {
   articles: Article[];
@@ -27,6 +28,17 @@ async function getWikipediaLanguages(): Promise<Language[]> {
   return Object.values(data.query.wbcontentlanguages);
 }
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const languageCodes = languages.map((language) => language.Wiki);
+
+  if (!languageCodes.includes(String(context.query.language))) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       articles: await getRandomArticleInfo(context.query.language as string),
@@ -35,10 +47,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-export default function RandomArticles({ articles, languages }: HomeProps) {
+export default function RandomArticles({ articles }: HomeProps) {
   const { query } = useRouter();
-  // TODO: If language is not recognized, redirect to english.
-  // TODO: Create header with language options
 
   return (
     <>

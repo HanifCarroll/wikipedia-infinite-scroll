@@ -20,10 +20,10 @@ export function ArticleList({ articles, language }: ArticleListProps) {
     <InfiniteScroll
       next={getData}
       hasMore={true}
-      loader={<h4>Loading...</h4>}
+      loader={<h3 className="text-center text-2xl mt-10">Loading...</h3>}
       dataLength={allArticles.length}
     >
-      <div className="flex flex-col items-center space-y-5 mt-10">
+      <div className="flex flex-col items-center space-y-10 mt-20">
         {allArticles.map((article) => (
           <ArticleSummary
             key={article.pageid}

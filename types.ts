@@ -1,5 +1,3 @@
-export type Params = { [key: string]: string };
-
 export type Article = {
   canonicalurl: string;
   displaytitle: string;
@@ -7,3 +5,7 @@ export type Article = {
   pageid: number;
   thumbnail?: { source: string };
 };
+
+export type Language = { code: string; name: string };
+
+export type Params = { [key: string]: string };

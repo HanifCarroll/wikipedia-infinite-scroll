@@ -22,8 +22,9 @@ export default function Home() {
       <Header />
       <div className="flex flex-col items-center justify-center">
         <input
-          className="border-2 border-black"
+          className="border-2 border-black p-1 text-sm"
           onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search for a language..."
           type="text"
           value={searchTerm}
         />

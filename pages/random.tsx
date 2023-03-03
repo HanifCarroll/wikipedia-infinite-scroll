@@ -1,25 +1,42 @@
 import Head from 'next/head';
 import { ArticleList } from '@/pages/components/ArticleList';
 import { Header } from '@/pages/components/Header';
-import { Article } from '@/types';
+import { Article, Language } from '@/types';
 import { getRandomArticleInfo } from '@/utils';
 import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
 
 type HomeProps = {
   articles: Article[];
+  languages: Language[];
 };
 
+async function getWikipediaLanguages(): Promise<Language[]> {
+  const url = 'https://www.wikidata.org/w/api.php?';
+  const requestParams = {
+    action: 'query',
+    format: 'json',
+    formatversion: '2',
+    meta: 'wbcontentlanguages',
+    wbclcontext: 'monolingualtext',
+    wbclprop: 'code|name',
+  };
+  const params = new URLSearchParams(requestParams).toString();
+  const data = await fetch(url + params).then((data) => data.json());
+
+  return Object.values(data.query.wbcontentlanguages);
+}
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
-      articles: await getRandomArticleInfo(context.params?.language as string),
+      articles: await getRandomArticleInfo(context.query.language as string),
+      languages: await getWikipediaLanguages(),
     },
   };
 }
 
-export default function Home({ articles }: HomeProps) {
-  const router = useRouter();
+export default function RandomArticles({ articles, languages }: HomeProps) {
+  const { query } = useRouter();
   // TODO: If language is not recognized, redirect to english.
   // TODO: Create header with language options
 
@@ -32,10 +49,7 @@ export default function Home({ articles }: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <ArticleList
-        articles={articles}
-        language={String(router.query.language)}
-      />
+      <ArticleList articles={articles} language={String(query.language)} />
     </>
   );
 }

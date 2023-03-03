@@ -23,7 +23,7 @@ export function ArticleList({ articles, language }: ArticleListProps) {
       loader={<h3 className="text-center text-2xl mt-10">Loading...</h3>}
       dataLength={allArticles.length}
     >
-      <div className="flex flex-col items-center space-y-10 mt-20">
+      <div className="flex flex-col items-center space-y-10">
         {allArticles.map((article) => (
           <ArticleSummary
             key={article.pageid}

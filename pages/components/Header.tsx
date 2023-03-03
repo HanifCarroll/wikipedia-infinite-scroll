@@ -1,7 +1,9 @@
+import Link from 'next/link';
+
 export function Header() {
   return (
-    <header className="fixed mb-20 h-10 border-2 border-gray-800 w-full bg-white">
-      Header
+    <header className="sticky top-0 mb-10 p-3 border-2 border-gray-800 w-full bg-white">
+      <Link href="/">Home</Link>
     </header>
   );
 }

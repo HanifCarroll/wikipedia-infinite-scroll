@@ -1,7 +1,16 @@
 import Head from 'next/head';
 import languages from '../languages.json';
+import { Header } from '@/pages/components/Header';
+import { useState } from 'react';
 
 export default function Home() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const filteredLanguages = languages.filter(
+    (language) =>
+      language.Wiki.toLowerCase().includes(searchTerm) ||
+      language.Language.toLowerCase().includes(searchTerm)
+  );
+
   return (
     <>
       <Head>
@@ -10,11 +19,17 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>Home</h1>
-      <div className="flex items-center justify-center">
-        <div className="mt-40 w-1/2 h-80 border-2 border-black overflow-scroll">
+      <Header />
+      <div className="flex flex-col items-center justify-center">
+        <input
+          className="border-2 border-black"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          type="text"
+          value={searchTerm}
+        />
+        <div className="mt-5 w-1/2 max-h-80 border-2 border-black overflow-scroll">
           <ul>
-            {languages.map((language) => (
+            {filteredLanguages.map((language) => (
               <li key={language.Wiki}>
                 <a href={`/random?language=${language.Wiki}`}>
                   {language.Language}

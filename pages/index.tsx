@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import languages from '../languages.json';
 
 export default function Home() {
   return (
@@ -10,14 +11,18 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1>Home</h1>
-      <div className="mt-40 float-left h-80 border-2 border-black overflow-scroll">
-        <ul>
-          {[{ name: 'English', code: 'en' }].map((language) => (
-            <li key={language.code}>
-              <a href={`/random/${language.code}`}>{language.name}</a>
-            </li>
-          ))}
-        </ul>
+      <div className="flex items-center justify-center">
+        <div className="mt-40 w-1/2 h-80 border-2 border-black overflow-scroll">
+          <ul>
+            {languages.map((language) => (
+              <li key={language.Wiki}>
+                <a href={`/random?language=${language.Wiki}`}>
+                  {language.Language}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </>
   );

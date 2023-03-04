@@ -1,11 +1,11 @@
 import Head from 'next/head';
-import { ArticleList } from '@/pages/components/ArticleList';
-import { Header } from '@/pages/components/Header';
-import { Article, Language } from '@/types';
-import { getRandomArticleInfo } from '@/utils';
+import { ArticleList } from '@/components/ArticleList';
+import { Header } from '@/components/Header';
+import { Article, Language } from '@/utils/types';
+import { getRandomArticleInfo } from '@/utils/utils';
 import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
-import languages from '../languages.json';
+import languages from '../utils/languages.json';
 
 type HomeProps = {
   articles: Article[];

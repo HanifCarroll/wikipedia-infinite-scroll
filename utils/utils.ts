@@ -63,7 +63,7 @@ export async function getRandomArticleInfo(language = 'en') {
     });
     articles = articles
       .concat(articlesInfo)
-      .filter((article) => article.thumbnail && article?.extract?.length < 600);
+      .filter((article) => article.thumbnail && article.extract);
   }
 
   return articles.slice(0, limit);

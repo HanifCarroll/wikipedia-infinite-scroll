@@ -13,6 +13,8 @@ export function ArticleSummary({
   title,
   url,
 }: ArticleSummaryProps) {
+  summary = summary.length > 400 ? summary.slice(0, 400) + '...' : summary;
+
   return (
     <a href={url} className="w-11/12 md:w-4/5">
       <div className="flex flex-col md:flex-row md:items-center h-500 bg-gray-100 border-2 border-gray-500 px-8 py-4 gap-6">

@@ -9,6 +9,9 @@
     "next/core-web-vitals",
     "prettier"
   ],
+  "rules": {
+    "@next/next/no-img-element": "off"
+  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {

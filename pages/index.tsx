@@ -29,15 +29,36 @@ export default function Home() {
           value={searchTerm}
         />
         <div className="mt-5 w-1/2 max-h-80 border-2 border-black overflow-scroll">
-          <ul>
-            {filteredLanguages.map((language) => (
-              <li key={language.Wiki}>
-                <a href={`/random?language=${language.Wiki}`}>
-                  {language.Language}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <table className="border-2 border-black border-collapse">
+            <thead>
+              <tr>
+                <th>Language</th>
+                <th>Language Code</th>
+                <th># of Articles</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredLanguages.map((language) => (
+                <tr key={language.Wiki} className="border-2 border-black ">
+                  <td className="text-center">
+                    <a href={`/random?language=${language.Wiki}`}>
+                      {language.Language}
+                    </a>
+                  </td>
+                  <td className="text-center">
+                    <a href={`/random?language=${language.Wiki}`}>
+                      {language.Wiki}
+                    </a>
+                  </td>
+                  <td className="text-center">
+                    <a href={`/random?language=${language.Wiki}`}>
+                      {language.Articles}
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

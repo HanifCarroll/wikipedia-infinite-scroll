@@ -28,8 +28,8 @@ export default function Home() {
           type="text"
           value={searchTerm}
         />
-        <div className="mt-5 w-1/2 max-h-80 border-2 border-black overflow-scroll">
-          <table className="border-2 border-black border-collapse">
+        <div className="mt-5 w-4/5 max-h-80 border-2 border-black overflow-scroll">
+          <table className="w-full border-2 border-black border-collapse">
             <thead>
               <tr>
                 <th>Language</th>
@@ -40,17 +40,17 @@ export default function Home() {
             <tbody>
               {filteredLanguages.map((language) => (
                 <tr key={language.Wiki} className="border-2 border-black ">
-                  <td className="text-center">
+                  <td className="text-center w-1/3">
                     <a href={`/random?language=${language.Wiki}`}>
                       {language.Language}
                     </a>
                   </td>
-                  <td className="text-center">
+                  <td className="text-center w-1/3">
                     <a href={`/random?language=${language.Wiki}`}>
                       {language.Wiki}
                     </a>
                   </td>
-                  <td className="text-center">
+                  <td className="text-center w-1/3">
                     <a href={`/random?language=${language.Wiki}`}>
                       {language.Articles}
                     </a>

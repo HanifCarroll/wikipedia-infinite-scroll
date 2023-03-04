@@ -1,6 +1,6 @@
 import Head from 'next/head';
-import languages from '../languages.json';
-import { Header } from '@/pages/components/Header';
+import languages from '../utils/languages.json';
+import { Header } from '@/components/Header';
 import { useState } from 'react';
 
 export default function Home() {

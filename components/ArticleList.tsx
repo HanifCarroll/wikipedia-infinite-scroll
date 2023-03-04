@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { ArticleSummary } from '@/pages/components/Article';
-import { Article } from '@/types';
+import { ArticleSummary } from '@/components/Article';
+import { Article } from '@/utils/types';
 
 type ArticleListProps = {
   articles: Article[];

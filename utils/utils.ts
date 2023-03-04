@@ -1,4 +1,4 @@
-import { Article, Params } from '@/types';
+import { Article, Params } from '@/utils/types';
 
 export async function getRandomArticleIds({
   language = 'en',

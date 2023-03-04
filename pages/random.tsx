@@ -63,7 +63,7 @@ export default function RandomArticles({ articles }: HomeProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
+      <Header language={language.Language} />
       <ArticleList articles={articles} language={language.Wiki} />
     </>
   );

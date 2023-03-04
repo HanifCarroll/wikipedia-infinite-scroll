@@ -20,7 +20,7 @@ export function ArticleList({ articles, language }: ArticleListProps) {
     <InfiniteScroll
       next={getData}
       hasMore={true}
-      loader={<h3 className="text-center text-2xl mt-10">Loading...</h3>}
+      loader={<h3 className="text-center text-2xl my-10">Loading...</h3>}
       dataLength={allArticles.length}
     >
       <div className="flex flex-col items-center space-y-10">
@@ -28,6 +28,7 @@ export function ArticleList({ articles, language }: ArticleListProps) {
           <ArticleSummary
             key={article.pageid}
             thumbnail={article.thumbnail?.source}
+            // Some titles have HTML tags that need to be removed.
             title={article.displaytitle.replace(/<[^>]+>/g, '')}
             summary={article.extract}
             url={article.canonicalurl}

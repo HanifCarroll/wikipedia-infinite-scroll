@@ -12,10 +12,12 @@ export function ArticleList({ articles, language }: ArticleListProps) {
   const [allArticles, setAllArticles] = useState<Article[]>(articles);
   const [isError, setIsError] = useState(false);
   const getData = async () => {
+    setIsError(false);
     fetch(`/api/getRandomArticleInfo?&language=${language}`)
       .then(async (data) => {
         const newArticleData = await data.json();
         setAllArticles([...allArticles, ...newArticleData]);
+        setIsError(false);
       })
       .catch(() => setIsError(true));
   };
@@ -24,7 +26,7 @@ export function ArticleList({ articles, language }: ArticleListProps) {
     <InfiniteScroll
       next={getData}
       hasMore={true}
-      loader={<Loader isError={isError} />}
+      loader={<Loader handleReload={getData} isError={isError} />}
       dataLength={allArticles.length}
     >
       <div className="flex flex-col items-center space-y-10">

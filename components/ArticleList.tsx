@@ -2,6 +2,7 @@ import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ArticleSummary } from '@/components/Article';
 import { Article } from '@/utils/types';
+import { Loader } from '@/components/Loader';
 
 type ArticleListProps = {
   articles: Article[];
@@ -9,18 +10,21 @@ type ArticleListProps = {
 };
 export function ArticleList({ articles, language }: ArticleListProps) {
   const [allArticles, setAllArticles] = useState<Article[]>(articles);
+  const [isError, setIsError] = useState(false);
   const getData = async () => {
-    const newArticleData = await fetch(
-      `/api/getRandomArticleInfo?&language=${language}`
-    ).then((data) => data.json());
-    setAllArticles([...allArticles, ...newArticleData]);
+    fetch(`/api/getRandomArticleInfo?&language=${language}`)
+      .then(async (data) => {
+        const newArticleData = await data.json();
+        setAllArticles([...allArticles, ...newArticleData]);
+      })
+      .catch(() => setIsError(true));
   };
 
   return (
     <InfiniteScroll
       next={getData}
       hasMore={true}
-      loader={<h3 className="text-center text-2xl my-10">Loading...</h3>}
+      loader={<Loader isError={isError} />}
       dataLength={allArticles.length}
     >
       <div className="flex flex-col items-center space-y-10">

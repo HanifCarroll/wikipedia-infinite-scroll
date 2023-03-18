@@ -21,15 +21,16 @@ export default function Home() {
       </Head>
       <Header />
       <div className="flex flex-col items-center justify-center">
+        <h1 className="text-3xl font-medium mb-5">Wikipedia Infinite Scroll</h1>
         <input
-          className="border-2 border-black p-1 text-sm"
+          className="border border-black p-1 text-sm rounded"
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search for a language..."
+          placeholder="Search for a language"
           type="text"
           value={searchTerm}
         />
-        <div className="mt-5 w-4/5 max-h-80 border-2 border-black overflow-scroll">
-          <table className="w-full border-2 border-black border-collapse">
+        <div className="mt-5 w-4/5 max-h-80 border-y border-black overflow-scroll">
+          <table className="w-full border border-black border-collapse">
             <thead>
               <tr>
                 <th>Language</th>
@@ -39,7 +40,7 @@ export default function Home() {
             </thead>
             <tbody>
               {filteredLanguages.map((language) => (
-                <tr key={language.Wiki} className="border-2 border-black ">
+                <tr key={language.Wiki} className="border border-black ">
                   <td className="text-center w-1/3">
                     <a href={`/random?language=${language.Wiki}`}>
                       {language.Language}

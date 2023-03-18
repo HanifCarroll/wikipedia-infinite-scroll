@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { ArticleSummary } from '@/components/Article';
+import { ArticleSummary } from '@/components/ArticleSummary';
 import { Article } from '@/utils/types';
 import { Loader } from '@/components/Loader';
 

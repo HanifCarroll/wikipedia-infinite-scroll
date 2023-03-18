@@ -15,7 +15,7 @@ export async function getRandomArticleIds({
     rnlimit: limit.toString(),
   };
   const params = new URLSearchParams(randomQueryParams).toString();
-  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&` + params;
+  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
   const randomData = await fetch(url).then((res) => res.json());
 
   return randomData.query.random.map((article: { id: number }) => article.id);
@@ -40,7 +40,7 @@ export async function getArticleInfoFromIds({
     redirects: '1',
   };
   const params = new URLSearchParams(infoQueryParams).toString();
-  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&` + params;
+  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
   const articleData = await fetch(url).then((res) => res.json());
 
   return Object.values(articleData.query.pages);

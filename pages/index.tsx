@@ -5,10 +5,11 @@ import { useState } from 'react';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
+  const formattedSearchTerm = searchTerm.trim().toLocaleLowerCase();
   const filteredLanguages = languages.filter(
     (language) =>
-      language.Wiki.toLowerCase().includes(searchTerm) ||
-      language.Language.toLowerCase().includes(searchTerm)
+      language.Wiki.toLowerCase().includes(formattedSearchTerm) ||
+      language.Language.toLowerCase().includes(formattedSearchTerm)
   );
 
   return (

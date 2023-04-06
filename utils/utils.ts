@@ -1,24 +1,34 @@
 import { Article, Params } from '@/utils/types';
+import enFeatured from '../utils/en-featured.json';
+import enGood from '../utils/en-good.json';
+import { sampleSize } from 'lodash';
 
-export async function getRandomArticleIds({
-  language = 'en',
-  limit = 20,
-}: {
-  language?: string;
+type RandomArticleArguments = {
+  language?: 'en';
   limit?: number;
-}): Promise<number[]> {
-  const randomQueryParams: Params = {
-    action: 'query',
-    format: 'json',
-    list: 'random',
-    rnnamespace: '0',
-    rnlimit: limit.toString(),
-  };
-  const params = new URLSearchParams(randomQueryParams).toString();
-  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
-  const randomData = await fetch(url).then((res) => res.json());
+  type?: ArticleCategory;
+};
 
-  return randomData.query.random.map((article: { id: number }) => article.id);
+const articlesMap = {
+  en: {
+    featured: enFeatured,
+    good: enGood,
+  },
+};
+
+export type ArticleCategory = 'featured' | 'good' | 'both';
+
+function getRandomArticleIdsFromLocal({
+  language = 'en',
+  limit,
+  type = 'featured',
+}: RandomArticleArguments) {
+  const articleIds =
+    type === 'featured' || type === 'good'
+      ? articlesMap[language][type]
+      : Object.values(articlesMap[language]).flat();
+
+  return sampleSize(articleIds, limit);
 }
 
 export async function getArticleInfoFromIds({
@@ -46,16 +56,20 @@ export async function getArticleInfoFromIds({
   return Object.values(articleData.query.pages);
 }
 
-export async function getRandomArticleInfo(language = 'en') {
+export async function getRandomArticleInfo({
+  language = 'en',
+  type = 'featured',
+}: RandomArticleArguments) {
   let articles: Article[] = [];
   const limit = 10;
 
   while (articles.length < limit) {
-    const randomArticleIds = await getRandomArticleIds({
+    const randomArticleIds = getRandomArticleIdsFromLocal({
       language,
       // Retrieve more IDs than we need to show so that we don't have to make
       // many requests if the results don't have thumbnails.
       limit: limit * 3,
+      type,
     });
     const articlesInfo = await getArticleInfoFromIds({
       articleIds: randomArticleIds,

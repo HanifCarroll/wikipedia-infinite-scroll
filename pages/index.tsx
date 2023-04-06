@@ -1,17 +1,8 @@
 import Head from 'next/head';
-import languages from '../utils/languages.json';
 import { Header } from '@/components/Header';
-import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const formattedSearchTerm = searchTerm.trim().toLocaleLowerCase();
-  const filteredLanguages = languages.filter(
-    (language) =>
-      language.Wiki.toLowerCase().includes(formattedSearchTerm) ||
-      language.Language.toLowerCase().includes(formattedSearchTerm)
-  );
-
   return (
     <>
       <Head>
@@ -22,45 +13,28 @@ export default function Home() {
       </Head>
       <Header />
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-medium mb-5">Wikipedia Infinite Scroll</h1>
-        <input
-          className="border border-black p-1 text-sm rounded"
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search for a language"
-          type="text"
-          value={searchTerm}
-        />
-        <div className="mt-5 w-4/5 max-h-80 border-y border-black overflow-scroll">
-          <table className="w-full border border-black border-collapse">
-            <thead>
-              <tr>
-                <th>Language</th>
-                <th>Language Code</th>
-                <th># of Articles</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLanguages.map((language) => (
-                <tr key={language.Wiki} className="border border-black ">
-                  <td className="text-center w-1/3">
-                    <a href={`/random?language=${language.Wiki}`}>
-                      {language.Language}
-                    </a>
-                  </td>
-                  <td className="text-center w-1/3">
-                    <a href={`/random?language=${language.Wiki}`}>
-                      {language.Wiki}
-                    </a>
-                  </td>
-                  <td className="text-center w-1/3">
-                    <a href={`/random?language=${language.Wiki}`}>
-                      {language.Articles}
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <h1 className="mb-5 text-3xl font-medium">Wikipedia Infinite Scroll</h1>
+        <div className="mt-5 max-h-80 w-4/5 text-center">
+          <ul className="space-y-4">
+            <li>
+              <Link
+                className="text-xl"
+                href="/random?&language=en&type=featured"
+              >
+                English - Featured
+              </Link>
+            </li>
+            <li>
+              <Link className="text-xl" href="/random?&language=en&type=good">
+                English - Good
+              </Link>
+            </li>
+            <li>
+              <Link className="text-xl" href="/random?&language=en&type=both">
+                English - Both
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </>

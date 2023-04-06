@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { ArticleList } from '@/components/ArticleList';
 import { Header } from '@/components/Header';
 import { Article, Language } from '@/utils/types';
-import { getRandomArticleInfo } from '@/utils/utils';
+import { ArticleCategory, getRandomArticleInfo } from '@/utils/utils';
 import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
 import languages from '../utils/languages.json';
@@ -15,11 +15,15 @@ type HomeProps = {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const languageCodes = languages.map((language) => language.Wiki);
   const requestedLanguage = String(context.query.language);
+  const type = String(context.query.type) as ArticleCategory;
 
   if (languageCodes.includes(requestedLanguage)) {
     return {
       props: {
-        articles: await getRandomArticleInfo(requestedLanguage),
+        articles: await getRandomArticleInfo({
+          language: requestedLanguage as never,
+          type,
+        }),
       },
     };
   }
@@ -37,11 +41,11 @@ export default function RandomArticles({ articles }: HomeProps) {
   const language = languages.find(
     (language) => language.Wiki === String(query.language)
   );
-  const languageName = language?.Language;
-  const languageCode = language?.Wiki;
-  const title = `Wikipedia Infinite Scroll - ${languageName}`;
-
   if (!language) return null;
+
+  const languageName = language.Language;
+  const languageCode = language.Wiki;
+  const title = `Wikipedia Infinite Scroll - ${languageName}`;
 
   return (
     <>

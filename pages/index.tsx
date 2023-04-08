@@ -1,8 +1,19 @@
 import Head from 'next/head';
 import { Header } from '@/components/Header';
 import Link from 'next/link';
+import { getLanguageTableData } from '@/utils/utils';
+import { useState } from 'react';
 
 export default function Home() {
+  const languageTableData = getLanguageTableData();
+  const [searchTerm, setSearchTerm] = useState('');
+  const formattedSearchTerm = searchTerm.trim().toLocaleLowerCase();
+  const filteredLanguages = languageTableData.filter(
+    (language) =>
+      language.code.toLowerCase().includes(formattedSearchTerm) ||
+      language.language.toLowerCase().includes(formattedSearchTerm)
+  );
+
   return (
     <>
       <Head>
@@ -14,27 +25,63 @@ export default function Home() {
       <Header />
       <div className="flex flex-col items-center justify-center">
         <h1 className="mb-5 text-3xl font-medium">Wikipedia Infinite Scroll</h1>
-        <div className="mt-5 max-h-80 w-4/5 text-center">
-          <ul className="space-y-4">
-            <li>
-              <Link
-                className="text-xl"
-                href="/random?&language=en&type=featured"
-              >
-                English - Featured
-              </Link>
-            </li>
-            <li>
-              <Link className="text-xl" href="/random?&language=en&type=good">
-                English - Good
-              </Link>
-            </li>
-            <li>
-              <Link className="text-xl" href="/random?&language=en&type=both">
-                English - Both
-              </Link>
-            </li>
-          </ul>
+        <p className="mb-5">
+          Click on one of the counts to view the list of articles
+        </p>
+        <input
+          className="rounded border border-black p-1 text-sm"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search for a language"
+          type="text"
+          value={searchTerm}
+        />
+        <div className="mt-5 max-h-80 w-4/5 overflow-scroll border-y border-black">
+          <table className="w-full border-collapse border border-black">
+            <thead>
+              <tr>
+                <th>Language</th>
+                <th>Language Code</th>
+                <th># of Featured Articles</th>
+                <th># of Good Articles</th>
+                <th># of Combined Articles</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredLanguages.map((language) => (
+                <tr key={language.language} className="border border-black ">
+                  <td className="w-1/5 text-center">
+                    <span>{language.language}</span>
+                  </td>
+                  <td className="w-1/5 text-center">
+                    <span>{language.code}</span>
+                  </td>
+                  <td className="w-1/5 text-center">
+                    {language.featuredCount > 0 ? (
+                      <Link href={language.featuredUrl}>
+                        {language.featuredCount}
+                      </Link>
+                    ) : (
+                      0
+                    )}
+                  </td>
+                  <td className="w-1/5 text-center">
+                    {language.goodCount > 0 ? (
+                      <Link href={language.goodUrl}>{language.goodCount}</Link>
+                    ) : (
+                      0
+                    )}
+                  </td>
+                  <td className="w-1/5 text-center">
+                    {language.bothCount > 0 ? (
+                      <Link href={language.bothUrl}>{language.bothCount}</Link>
+                    ) : (
+                      0
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

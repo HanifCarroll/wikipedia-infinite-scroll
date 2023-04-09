@@ -1,4 +1,4 @@
-import { sampleSize } from 'lodash';
+import { sampleSize, shuffle } from 'lodash';
 import { Article, Params } from '@/utils/types';
 import languageArticleInfo from './languageArticleInfo.json';
 
@@ -12,25 +12,41 @@ export type ArticleCategory = 'featured' | 'good' | 'both';
 
 async function getRandomArticleIdsFromLocal({
   language = 'en',
-  limit,
+  limit = 20,
   type = 'featured',
 }: RandomArticleArguments) {
-  const featuredFileName = './featured/' + language + '-featured.json';
-  const goodFileName = './good/' + language + '-good.json';
-  // TODO: Check to see if they exist before trying to import
-  const articlesMap = {
-    featured: await import(`${featuredFileName}`),
-    good: await import(`${goodFileName}`),
-  };
+  const articlesMap = await getArticleMap(language);
   const articleIds =
     type === 'featured' || type === 'good'
       ? articlesMap[type]
-      : [
-          ...Object.values(articlesMap.featured),
-          ...Object.values(articlesMap.good),
-        ];
+      : [...articlesMap.featured, ...articlesMap.good];
 
+  if (articleIds.length <= limit) {
+    return articleIds;
+  }
   return sampleSize(articleIds, limit);
+}
+
+async function getArticleMap(language: string) {
+  const featuredFileName = './featured/' + language + '-featured.json';
+  const goodFileName = './good/' + language + '-good.json';
+  const featuredFileExists = languageArticleInfo.featured.find(
+    (lang) => lang.code === language
+  );
+  const goodFileExists = languageArticleInfo.good.find(
+    (lang) => lang.code === language
+  );
+  const featuredFile = Boolean(featuredFileExists)
+    ? await import(`${featuredFileName}`).then((module) => module.default)
+    : [];
+  const goodFile = Boolean(goodFileExists)
+    ? await import(`${goodFileName}`).then((module) => module.default)
+    : [];
+
+  return {
+    featured: featuredFile,
+    good: goodFile,
+  };
 }
 
 export async function getArticleInfoFromIds({
@@ -57,7 +73,9 @@ export async function getArticleInfoFromIds({
     .then((res) => res.json())
     .catch((err) => console.log('err', err));
 
-  return Object.values(articleData?.query?.pages);
+  return articleData?.query?.pages
+    ? Object.values(articleData.query.pages)
+    : [];
 }
 
 export async function getRandomArticleInfo({
@@ -67,18 +85,14 @@ export async function getRandomArticleInfo({
   let articles: Article[] = [];
   const limit = 10;
 
-  while (articles.length < limit) {
+  do {
     const randomArticleIds = await getRandomArticleIdsFromLocal({
       language,
       // Retrieve more IDs than we need to show so that we don't have to make
       // many requests if the results don't have thumbnails.
-      limit: limit * 3,
+      limit: limit * 2,
       type,
     });
-    if (!randomArticleIds.length) {
-      console.log('something went wrong');
-      return [];
-    }
     const articlesInfo = await getArticleInfoFromIds({
       articleIds: randomArticleIds,
       language,
@@ -86,18 +100,15 @@ export async function getRandomArticleInfo({
     articles = articles
       .concat(articlesInfo)
       .filter((article) => article.thumbnail && article.extract);
-  }
 
-  return articles.slice(0, limit);
+    if (!articles.length || articles.length < limit) {
+      break;
+    }
+  } while (articles.length < limit);
+
+  return shuffle(articles.slice(0, limit));
 }
 
-// Desired format:
-// {
-//    language: 'English',
-//    code: 'en',
-//    featuredCount: 10,
-//    goodCount: 10
-//  }
 export function getLanguageTableData() {
   const { featured, good } = languageArticleInfo;
   const result = featured.map((language) => ({
@@ -108,13 +119,24 @@ export function getLanguageTableData() {
     featuredUrl: `/random?&language=${language.code}&type=featured`,
     goodUrl: `/random?&language=${language.code}&type=good`,
     bothUrl: `/random?&language=${language.code}&type=both`,
-    bothCount: 0,
+    bothCount: language.count,
   }));
   good.forEach((language) => {
     const objectToUpdate = result.find((lang) => lang.code === language.code);
     if (objectToUpdate) {
       objectToUpdate.goodCount = language.count;
       objectToUpdate.bothCount = objectToUpdate.featuredCount + language.count;
+    } else {
+      result.push({
+        language: language.language,
+        code: language.code,
+        featuredCount: 0,
+        goodCount: language.count,
+        featuredUrl: '',
+        goodUrl: `/random?&language=${language.code}&type=good`,
+        bothUrl: `/random?&language=${language.code}&type=both`,
+        bothCount: language.count,
+      });
     }
   });
 

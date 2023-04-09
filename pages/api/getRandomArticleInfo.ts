@@ -8,5 +8,6 @@ export default async function handler(
 ) {
   const language = String(req.query.language) as never;
   const type = String(req.query.type) as ArticleCategory;
-  return res.status(200).json(await getRandomArticleInfo({ language, type }));
+  const articleInfo = await getRandomArticleInfo({ language, type });
+  return res.status(200).json(articleInfo);
 }

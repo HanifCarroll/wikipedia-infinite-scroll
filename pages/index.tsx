@@ -35,27 +35,27 @@ export default function Home() {
           type="text"
           value={searchTerm}
         />
-        <div className="mt-5 max-h-80 w-4/5 overflow-scroll border-y border-black">
+        <div className="mt-5 max-h-80 w-11/12 overflow-scroll border-y border-black md:w-4/5">
           <table className="w-full border-collapse border border-black">
             <thead>
               <tr>
                 <th>Language</th>
-                <th>Language Code</th>
-                <th># of Featured Articles</th>
-                <th># of Good Articles</th>
-                <th># of Combined Articles</th>
+                <th>Code</th>
+                <th>Featured Articles</th>
+                <th>Good Articles</th>
+                <th>Combined Articles</th>
               </tr>
             </thead>
             <tbody>
               {filteredLanguages.map((language) => (
                 <tr key={language.language} className="border border-black ">
-                  <td className="w-1/5 text-center">
+                  <td className="text-center">
                     <span>{language.language}</span>
                   </td>
-                  <td className="w-1/5 text-center">
+                  <td className="text-center">
                     <span>{language.code}</span>
                   </td>
-                  <td className="w-1/5 text-center">
+                  <td className="text-center">
                     {language.featuredCount > 0 ? (
                       <Link href={language.featuredUrl}>
                         {language.featuredCount}
@@ -64,14 +64,14 @@ export default function Home() {
                       0
                     )}
                   </td>
-                  <td className="w-1/5 text-center">
+                  <td className="text-center">
                     {language.goodCount > 0 ? (
                       <Link href={language.goodUrl}>{language.goodCount}</Link>
                     ) : (
                       0
                     )}
                   </td>
-                  <td className="w-1/5 text-center">
+                  <td className="text-center">
                     {language.bothCount > 0 ? (
                       <Link href={language.bothUrl}>{language.bothCount}</Link>
                     ) : (

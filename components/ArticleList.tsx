@@ -19,7 +19,10 @@ export function ArticleList({ articles, language }: ArticleListProps) {
         setAllArticles([...allArticles, ...newArticleData]);
         setIsError(false);
       })
-      .catch(() => setIsError(true));
+      .catch((e) => {
+        setIsError(true);
+        console.log('Error: ', e);
+      });
   };
 
   return (

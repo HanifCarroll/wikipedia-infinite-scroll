@@ -6,14 +6,19 @@ import { Loader } from '@/components/Loader';
 
 type ArticleListProps = {
   articles: Article[];
+  articleType: string;
   language?: string;
 };
-export function ArticleList({ articles, language }: ArticleListProps) {
+export function ArticleList({
+  articles,
+  articleType,
+  language,
+}: ArticleListProps) {
   const [allArticles, setAllArticles] = useState<Article[]>(articles);
   const [isError, setIsError] = useState(false);
   const getData = async () => {
     setIsError(false);
-    fetch(`/api/getRandomArticleInfo?&language=${language}`)
+    fetch(`/api/getRandomArticleInfo?&language=${language}&type=${articleType}`)
       .then(async (data) => {
         const newArticleData = await data.json();
         setAllArticles([...allArticles, ...newArticleData]);

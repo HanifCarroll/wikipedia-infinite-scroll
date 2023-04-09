@@ -1,10 +1,10 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { GetServerSidePropsContext } from 'next';
 import { ArticleList } from '@/components/ArticleList';
 import { Header } from '@/components/Header';
 import { Article, Language } from '@/utils/types';
 import { ArticleCategory, getRandomArticleInfo } from '@/utils/utils';
-import { useRouter } from 'next/router';
-import { GetServerSidePropsContext } from 'next';
 import languages from '../utils/languages.json';
 
 type HomeProps = {
@@ -56,7 +56,11 @@ export default function RandomArticles({ articles }: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header language={languageName} />
-      <ArticleList articles={articles} language={languageCode} />
+      <ArticleList
+        articles={articles}
+        articleType={String(query.type)}
+        language={languageCode}
+      />
     </>
   );
 }

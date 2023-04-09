@@ -14,7 +14,9 @@ export function ArticleSummary({
   const summaryCharacterLimit = 400;
   if (summary.length > summaryCharacterLimit) {
     const lastPeriodIndex = summary.lastIndexOf('.', summaryCharacterLimit);
-    summary = summary.slice(0, lastPeriodIndex + 1);
+    const endIndex =
+      lastPeriodIndex === -1 ? summaryCharacterLimit : lastPeriodIndex;
+    summary = summary.slice(0, endIndex);
   }
 
   return (

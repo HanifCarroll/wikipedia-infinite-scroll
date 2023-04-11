@@ -1,5 +1,4 @@
 import { sampleSize, shuffle } from 'lodash';
-import { Article, Params } from '@/utils/types';
 import languageArticleInfo from './languageArticleInfo.json';
 
 type RandomArticleArguments = {
@@ -10,26 +9,9 @@ type RandomArticleArguments = {
 
 export type ArticleCategory = 'featured' | 'good' | 'both';
 
-async function getRandomArticleIdsFromLocal({
-  language = 'en',
-  limit = 20,
-  type = 'featured',
-}: RandomArticleArguments) {
-  const articlesMap = await getArticleMap(language);
-  const articleIds =
-    type === 'featured' || type === 'good'
-      ? articlesMap[type]
-      : [...articlesMap.featured, ...articlesMap.good];
-
-  if (articleIds.length <= limit) {
-    return articleIds;
-  }
-  return sampleSize(articleIds, limit);
-}
-
 async function getArticleMap(language: string) {
-  const featuredFileName = './featured/' + language + '-featured.json';
-  const goodFileName = './good/' + language + '-good.json';
+  const featuredFileName = './articleData/' + language + '-featured.json';
+  const goodFileName = './articleData/' + language + '-good.json';
   const featuredFileExists = languageArticleInfo.featured.find(
     (lang) => lang.code === language
   );
@@ -49,64 +31,22 @@ async function getArticleMap(language: string) {
   };
 }
 
-export async function getArticleInfoFromIds({
-  articleIds,
-  language = 'en',
-}: {
-  articleIds: number[];
-  language?: string;
-}): Promise<Article[]> {
-  const infoQueryParams: Params = {
-    action: 'query',
-    format: 'json',
-    exintro: 'true',
-    explaintext: 'true',
-    inprop: 'url|displaytitle|preload',
-    pageids: articleIds.join('|'),
-    pithumbsize: '150',
-    prop: 'extracts|pageimages|info',
-    redirects: '1',
-  };
-  const params = new URLSearchParams(infoQueryParams).toString();
-  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
-  const articleData = await fetch(url)
-    .then((res) => res.json())
-    .catch((err) => console.log('err', err));
-
-  return articleData?.query?.pages
-    ? Object.values(articleData.query.pages)
-    : [];
-}
-
 export async function getRandomArticleInfo({
   language = 'en',
   type = 'featured',
 }: RandomArticleArguments) {
-  let articles: Article[] = [];
   const limit = 10;
+  const articlesMap = await getArticleMap(language);
+  const articles =
+    type === 'featured' || type === 'good'
+      ? articlesMap[type]
+      : articlesMap.featured.concat(articlesMap.good);
+  const shuffledArticles = shuffle(articles);
 
-  do {
-    const randomArticleIds = await getRandomArticleIdsFromLocal({
-      language,
-      // Retrieve more IDs than we need to show so that we don't have to make
-      // many requests if the results don't have thumbnails.
-      limit: limit * 2,
-      type,
-    });
-    const articlesInfo = await getArticleInfoFromIds({
-      articleIds: randomArticleIds,
-      language,
-    });
-    articles = articles
-      .concat(articlesInfo)
-      .filter((article) => article.thumbnail && article.extract);
-
-    if (!articles.length || articles.length < limit) {
-      break;
-    }
-  } while (articles.length < limit);
-
-  return shuffle(articles.slice(0, limit));
+  if (articles.length <= limit) {
+    return shuffledArticles;
+  }
+  return sampleSize(shuffledArticles, limit);
 }
 
 export function getLanguageTableData() {

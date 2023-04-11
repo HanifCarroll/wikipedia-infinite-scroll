@@ -40,12 +40,12 @@ export function ArticleList({
       <div className="flex flex-col items-center space-y-10">
         {allArticles.map((article) => (
           <ArticleSummary
-            key={article.pageid}
-            thumbnail={article.thumbnail?.source}
+            key={article.id}
+            thumbnail={article.thumbnail_url}
             // Some titles have HTML tags that need to be removed.
-            title={article.displaytitle.replace(/<[^>]+>/g, '')}
-            summary={article.extract}
-            url={article.canonicalurl}
+            title={article.title.replace(/<[^>]+>/g, '')}
+            summary={article.summary}
+            url={article.url}
           />
         ))}
       </div>

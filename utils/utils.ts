@@ -6,6 +6,7 @@ type RandomArticleArguments = {
   language?: 'en';
   limit?: number;
   type?: ArticleCategory;
+  seenArticleIds: string[];
 };
 
 export type ArticleCategory = 'featured' | 'good' | 'both';
@@ -13,6 +14,7 @@ export type ArticleCategory = 'featured' | 'good' | 'both';
 export async function getRandomArticleInfo({
   language = 'en',
   type = 'featured',
+  seenArticleIds = [],
 }: RandomArticleArguments) {
   const limit = 10;
   const languageData = languageArticleInfo.find(
@@ -22,15 +24,22 @@ export async function getRandomArticleInfo({
     return [];
   }
 
-  const featuredArticleIds = languageData.featuredArticleIds.map(Number);
-  const goodArticleIds = languageData.goodArticleIds.map(Number);
+  const featuredArticleIds = languageData.featuredArticleIds.map(String);
+  const goodArticleIds = languageData.goodArticleIds.map(String);
   const articleIds =
     type === 'featured'
       ? featuredArticleIds
       : type === 'good'
       ? goodArticleIds
       : featuredArticleIds.concat(goodArticleIds);
-  const randomArticleIds = sampleSize(shuffle(articleIds), limit);
+  const unseenArticleIds = articleIds.filter(
+    (id) => !seenArticleIds.includes(id)
+  );
+  if (!unseenArticleIds.length) {
+    return [];
+  }
+
+  const randomArticleIds = sampleSize(shuffle(unseenArticleIds), limit);
 
   return await getArticleInfoFromIds({
     articleIds: randomArticleIds,
@@ -62,7 +71,7 @@ export async function getArticleInfoFromIds({
   articleIds,
   language = 'en',
 }: {
-  articleIds: number[];
+  articleIds: string[];
   language?: string;
 }): Promise<Article[]> {
   const infoQueryParams: Params = {

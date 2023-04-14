@@ -18,11 +18,29 @@ export function ArticleList({
   const [allArticles, setAllArticles] = useState<Article[]>(articles);
   const [isError, setIsError] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const seenArticleIds = allArticles.map((article) => article.pageid);
   const getData = async () => {
     setIsError(false);
-    fetch(`/api/getRandomArticleInfo?&language=${language}&type=${articleType}`)
+    fetch(
+      `/api/getRandomArticleInfo?&language=${language}&type=${articleType}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          articleType,
+          language,
+          seenArticleIds,
+        }),
+      }
+    )
       .then(async (data) => {
         const newArticleData = await data.json();
+        if (newArticleData.length === 0) {
+          setHasMore(false);
+          return;
+        }
         const oldArticleIds = allArticles.map((article) => article.pageid);
         const articlesToAdd = newArticleData.filter(
           (article: Article) => !oldArticleIds.includes(article.pageid)
@@ -40,7 +58,7 @@ export function ArticleList({
     <InfiniteScroll
       next={getData}
       endMessage={<NoMoreArticles />}
-      hasMore={false}
+      hasMore={hasMore}
       loader={<Loader handleReload={getData} isError={isError} />}
       dataLength={allArticles.length}
     >

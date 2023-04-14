@@ -72,7 +72,7 @@ export async function getArticleInfoFromIds({
     explaintext: 'true',
     inprop: 'url|displaytitle|preload',
     pageids: articleIds.join('|'),
-    pithumbsize: '150',
+    pithumbsize: '220',
     prop: 'extracts|pageimages|info',
     redirects: '1',
   };

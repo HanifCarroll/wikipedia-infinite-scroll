@@ -16,6 +16,7 @@ export function ArticleList({
 }: ArticleListProps) {
   const [allArticles, setAllArticles] = useState<Article[]>(articles);
   const [isError, setIsError] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const getData = async () => {
     setIsError(false);
     fetch(`/api/getRandomArticleInfo?&language=${language}&type=${articleType}`)
@@ -37,7 +38,8 @@ export function ArticleList({
   return (
     <InfiniteScroll
       next={getData}
-      hasMore={true}
+      endMessage={<h1>You win!</h1>}
+      hasMore={false}
       loader={<Loader handleReload={getData} isError={isError} />}
       dataLength={allArticles.length}
     >

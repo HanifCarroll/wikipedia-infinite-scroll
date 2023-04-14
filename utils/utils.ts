@@ -1,5 +1,6 @@
 import { sampleSize, shuffle } from 'lodash';
-import languageArticleInfo from './languageArticleInfo.json';
+import languageArticleInfo from './articles.json';
+import { Article, Params } from '@/utils/types';
 
 type RandomArticleArguments = {
   language?: 'en';
@@ -9,76 +10,79 @@ type RandomArticleArguments = {
 
 export type ArticleCategory = 'featured' | 'good' | 'both';
 
-async function getArticleMap(language: string) {
-  const featuredFileName = './articleData/' + language + '-featured.json';
-  const goodFileName = './articleData/' + language + '-good.json';
-  const featuredFileExists = languageArticleInfo.featured.find(
-    (lang) => lang.code === language
-  );
-  const goodFileExists = languageArticleInfo.good.find(
-    (lang) => lang.code === language
-  );
-  const featuredFile = Boolean(featuredFileExists)
-    ? await import(`${featuredFileName}`).then((module) => module.default)
-    : [];
-  const goodFile = Boolean(goodFileExists)
-    ? await import(`${goodFileName}`).then((module) => module.default)
-    : [];
-
-  return {
-    featured: featuredFile,
-    good: goodFile,
-  };
-}
-
 export async function getRandomArticleInfo({
   language = 'en',
   type = 'featured',
 }: RandomArticleArguments) {
   const limit = 10;
-  const articlesMap = await getArticleMap(language);
-  const articles =
-    type === 'featured' || type === 'good'
-      ? articlesMap[type]
-      : articlesMap.featured.concat(articlesMap.good);
-  const shuffledArticles = shuffle(articles);
-
-  if (articles.length <= limit) {
-    return shuffledArticles;
+  const languageData = languageArticleInfo.find(
+    (lang) => lang.languageCode === language
+  );
+  if (!languageData) {
+    return [];
   }
-  return sampleSize(shuffledArticles, limit);
+
+  const featuredArticleIds = languageData.featuredArticleIds.map(Number);
+  const goodArticleIds = languageData.goodArticleIds.map(Number);
+  const articleIds =
+    type === 'featured'
+      ? featuredArticleIds
+      : type === 'good'
+      ? goodArticleIds
+      : featuredArticleIds.concat(goodArticleIds);
+  const randomArticleIds = sampleSize(shuffle(articleIds), limit);
+
+  return await getArticleInfoFromIds({
+    articleIds: randomArticleIds,
+    language,
+  });
 }
 
 export function getLanguageTableData() {
-  const { featured, good } = languageArticleInfo;
-  const result = featured.map((language) => ({
-    language: language.language,
-    code: language.code,
-    featuredCount: language.count,
-    goodCount: 0,
-    featuredUrl: `/random?&language=${language.code}&type=featured`,
-    goodUrl: `/random?&language=${language.code}&type=good`,
-    bothUrl: `/random?&language=${language.code}&type=both`,
-    bothCount: language.count,
+  return languageArticleInfo.map((language) => ({
+    name: language.languageName,
+    code: language.languageCode,
+    featuredCount: language.featuredArticleCount,
+    goodCount: language.goodArticleCount,
+    featuredUrl: `/random?&language=${language.languageCode}&type=featured`,
+    goodUrl: `/random?&language=${language.languageCode}&type=good`,
+    bothUrl: `/random?&language=${language.languageCode}&type=both`,
+    bothCount: language.bothCount,
   }));
-  good.forEach((language) => {
-    const objectToUpdate = result.find((lang) => lang.code === language.code);
-    if (objectToUpdate) {
-      objectToUpdate.goodCount = language.count;
-      objectToUpdate.bothCount = objectToUpdate.featuredCount + language.count;
-    } else {
-      result.push({
-        language: language.language,
-        code: language.code,
-        featuredCount: 0,
-        goodCount: language.count,
-        featuredUrl: '',
-        goodUrl: `/random?&language=${language.code}&type=good`,
-        bothUrl: `/random?&language=${language.code}&type=both`,
-        bothCount: language.count,
-      });
-    }
-  });
+}
 
-  return result;
+export const languageCodes = languageArticleInfo.map(
+  ({ languageCode, languageName }) => ({
+    name: languageName,
+    code: languageCode,
+  })
+);
+
+export async function getArticleInfoFromIds({
+  articleIds,
+  language = 'en',
+}: {
+  articleIds: number[];
+  language?: string;
+}): Promise<Article[]> {
+  const infoQueryParams: Params = {
+    action: 'query',
+    format: 'json',
+    exintro: 'true',
+    explaintext: 'true',
+    inprop: 'url|displaytitle|preload',
+    pageids: articleIds.join('|'),
+    pithumbsize: '150',
+    prop: 'extracts|pageimages|info',
+    redirects: '1',
+  };
+  const params = new URLSearchParams(infoQueryParams).toString();
+  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
+  const articleData = await fetch(url)
+    .then((res) => res.json())
+    .catch((err) => console.log('err', err));
+
+  return articleData?.query?.pages
+    ? Object.values(articleData.query.pages)
+    : [];
 }

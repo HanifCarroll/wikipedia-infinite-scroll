@@ -21,7 +21,11 @@ export function ArticleList({
     fetch(`/api/getRandomArticleInfo?&language=${language}&type=${articleType}`)
       .then(async (data) => {
         const newArticleData = await data.json();
-        setAllArticles([...allArticles, ...newArticleData]);
+        const oldArticleIds = allArticles.map((article) => article.pageid);
+        const articlesToAdd = newArticleData.filter(
+          (article: Article) => !oldArticleIds.includes(article.pageid)
+        );
+        setAllArticles([...allArticles, ...articlesToAdd]);
         setIsError(false);
       })
       .catch((e) => {
@@ -40,12 +44,12 @@ export function ArticleList({
       <div className="flex flex-col items-center space-y-10">
         {allArticles.map((article) => (
           <ArticleSummary
-            key={article.id}
-            thumbnail={article.thumbnail_url}
+            key={article.pageid}
+            thumbnail={article.thumbnail?.source}
             // Some titles have HTML tags that need to be removed.
-            title={article.title.replace(/<[^>]+>/g, '')}
-            summary={article.summary}
-            url={article.url}
+            title={article.displaytitle.replace(/<[^>]+>/g, '')}
+            summary={article.extract}
+            url={article.canonicalurl}
           />
         ))}
       </div>

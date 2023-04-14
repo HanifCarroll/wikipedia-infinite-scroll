@@ -3,6 +3,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { ArticleSummary } from '@/components/ArticleSummary';
 import { Article } from '@/utils/types';
 import { Loader } from '@/components/Loader';
+import { NoMoreArticles } from '@/components/NoMoreArticles';
 
 type ArticleListProps = {
   articles: Article[];
@@ -38,7 +39,7 @@ export function ArticleList({
   return (
     <InfiniteScroll
       next={getData}
-      endMessage={<h1>You win!</h1>}
+      endMessage={<NoMoreArticles />}
       hasMore={false}
       loader={<Loader handleReload={getData} isError={isError} />}
       dataLength={allArticles.length}

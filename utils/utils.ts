@@ -14,7 +14,7 @@ export type ArticleCategory = 'featured' | 'good' | 'both';
 export async function getRandomArticleInfo({
   language = 'en',
   type = 'featured',
-  seenArticleIds = [],
+  seenArticleIds,
 }: RandomArticleArguments) {
   const limit = 10;
   const languageData = languageArticleInfo.find(

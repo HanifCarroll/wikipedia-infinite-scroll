@@ -27,6 +27,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         articles: await getRandomArticleInfo({
           language: requestedLanguage as never,
           type,
+          seenArticleIds: [],
         }),
       },
     };

@@ -26,7 +26,7 @@ export default function Home() {
       <div className="flex flex-col items-center justify-center">
         <h1 className="mb-5 text-3xl font-medium">Wikipedia Infinite Scroll</h1>
         <p className="mb-5">
-          Click on one of the counts to view the list of articles
+          Click on one of the counts to view the corresponding list of articles
         </p>
         <input
           className="rounded border border-black p-1 text-sm"

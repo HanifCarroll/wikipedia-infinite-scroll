@@ -8,11 +8,14 @@ export default function Home() {
   const languageTableData = getLanguageTableData();
   const [searchTerm, setSearchTerm] = useState('');
   const formattedSearchTerm = searchTerm.trim().toLocaleLowerCase();
-  const filteredLanguages = languageTableData.filter(
-    (language) =>
-      language.code.toLowerCase().includes(formattedSearchTerm) ||
-      language.name.toLowerCase().includes(formattedSearchTerm)
-  );
+  const filteredLanguages = languageTableData
+    .filter(
+      (language) =>
+        (language.code.toLowerCase().includes(formattedSearchTerm) ||
+          language.name.toLowerCase().includes(formattedSearchTerm)) &&
+        language.bothCount !== 0
+    )
+    .sort((lang1, lang2) => lang2.bothCount - lang1.bothCount);
 
   return (
     <>

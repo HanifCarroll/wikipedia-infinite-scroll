@@ -1,9 +1,9 @@
 export type Article = {
-  url: string;
-  title: string;
-  summary: string;
-  id: number;
-  thumbnail_url?: string;
+  canonicalurl: string;
+  displaytitle: string;
+  extract: string;
+  pageid: number;
+  thumbnail?: { source: string };
 };
 
 export type Language = { code: string; name: string };

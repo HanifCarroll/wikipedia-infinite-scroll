@@ -11,7 +11,7 @@ export default function Home() {
   const filteredLanguages = languageTableData.filter(
     (language) =>
       language.code.toLowerCase().includes(formattedSearchTerm) ||
-      language.language.toLowerCase().includes(formattedSearchTerm)
+      language.name.toLowerCase().includes(formattedSearchTerm)
   );
 
   return (
@@ -48,9 +48,9 @@ export default function Home() {
             </thead>
             <tbody>
               {filteredLanguages.map((language) => (
-                <tr key={language.language} className="border border-black ">
+                <tr key={language.name} className="border border-black ">
                   <td className="text-center">
-                    <span>{language.language}</span>
+                    <span>{language.name}</span>
                   </td>
                   <td className="text-center">
                     <span>{language.code}</span>

@@ -4,8 +4,11 @@ import { GetServerSidePropsContext } from 'next';
 import { ArticleList } from '@/components/ArticleList';
 import { Header } from '@/components/Header';
 import { Article, Language } from '@/utils/types';
-import { ArticleCategory, getRandomArticleInfo } from '@/utils/utils';
-import languages from '../utils/languages.json';
+import {
+  ArticleCategory,
+  getRandomArticleInfo,
+  languageCodes,
+} from '@/utils/utils';
 
 type HomeProps = {
   articles: Article[];
@@ -13,11 +16,12 @@ type HomeProps = {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const languageCodes = languages.map((language) => language.Wiki);
-  const requestedLanguage = String(context.query.language);
-  const type = String(context.query.type) as ArticleCategory;
+  const requestedLanguage = String(context.query.language).toLocaleLowerCase();
+  const type = String(
+    context.query.type
+  ).toLocaleLowerCase() as ArticleCategory;
 
-  if (languageCodes.includes(requestedLanguage)) {
+  if (languageCodes.find((language) => language.code === requestedLanguage)) {
     return {
       props: {
         articles: await getRandomArticleInfo({
@@ -38,13 +42,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function RandomArticles({ articles }: HomeProps) {
   const { query } = useRouter();
-  const language = languages.find(
-    (language) => language.Wiki === String(query.language)
+  const language = languageCodes.find(
+    (language) => language.code === String(query.language).toLocaleLowerCase()
   );
   if (!language) return null;
 
-  const languageName = language.Language;
-  const languageCode = language.Wiki;
+  const languageName = language.name;
+  const languageCode = language.code;
   const title = `Wikipedia Infinite Scroll - ${languageName}`;
 
   return (

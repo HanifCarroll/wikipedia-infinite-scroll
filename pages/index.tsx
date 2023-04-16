@@ -86,6 +86,11 @@ export default function Home() {
             </tbody>
           </table>
         </div>
+        <p className="my-3 underline">
+          <a href="https://en.wikipedia.org/wiki/Wikipedia:Compare_criteria_Good_v._Featured_article">
+            What are good and featured articles?
+          </a>
+        </p>
       </div>
     </>
   );

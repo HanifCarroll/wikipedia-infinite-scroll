@@ -27,11 +27,15 @@ export async function getRandomArticleIds({
   };
   const params = new URLSearchParams(randomQueryParams).toString();
   const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
-  const randomData = await fetch(url).then((res) => res.json());
-
-  return randomData.query.random.map((article: { id: number }) =>
-    article.id.toString()
-  );
+  try {
+    const randomData = await fetch(url).then((res) => res.json());
+    return randomData.query.random.map((article: { id: number }) =>
+      article.id.toString()
+    );
+  } catch (e) {
+    console.log('Error during getRandomArticleIds: ', e);
+    return [];
+  }
 }
 
 async function getTrulyRandomArticleInfo({
@@ -41,17 +45,31 @@ async function getTrulyRandomArticleInfo({
   seenArticleIds: string[];
   language: string;
 }) {
-  const limit = 10;
+  const limit = 30;
   let randomIds: string[] = [];
 
   do {
-    const newIds = await getRandomArticleIds({ language, limit: 30 });
-    randomIds = newIds.filter((id) => !seenArticleIds.includes(id));
+    const newIds = await getRandomArticleIds({ language, limit: 50 });
+    const unseenIds = newIds.filter((id) => !seenArticleIds.includes(id));
+    if (unseenIds.length === 0 || newIds.length === 0) {
+      break;
+    }
+    randomIds = randomIds.concat(unseenIds);
+    sleep(0.2);
   } while (randomIds.length < limit);
+
+  if (randomIds.length === 0) {
+    return [];
+  }
 
   const articleIds = sampleSize(randomIds, limit);
 
   return await getArticleInfoFromIds({ articleIds, language });
+}
+
+function sleep(seconds: number) {
+  const e = new Date().getTime() + seconds * 1000;
+  while (new Date().getTime() <= e) {}
 }
 
 export async function getRandomArticleInfo({
@@ -123,6 +141,10 @@ export async function getArticleInfoFromIds({
   articleIds: string[];
   language?: string;
 }): Promise<Article[]> {
+  if (!articleIds.length) {
+    return [];
+  }
+
   const infoQueryParams: Params = {
     action: 'query',
     format: 'json',

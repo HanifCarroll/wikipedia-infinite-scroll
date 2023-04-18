@@ -12,7 +12,7 @@ export function ArticleSummary({
   url,
 }: ArticleSummaryProps) {
   const summaryCharacterLimit = 400;
-  if (summary.length > summaryCharacterLimit) {
+  if (summary?.length > summaryCharacterLimit) {
     const lastPeriodIndex = summary.lastIndexOf('.', summaryCharacterLimit);
     const endIndex =
       lastPeriodIndex === -1 ? summaryCharacterLimit : lastPeriodIndex;

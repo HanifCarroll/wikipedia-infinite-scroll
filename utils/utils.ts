@@ -9,7 +9,50 @@ type RandomArticleArguments = {
   seenArticleIds: string[];
 };
 
-export type ArticleCategory = 'featured' | 'good' | 'both';
+export type ArticleCategory = 'featured' | 'good' | 'both' | 'all';
+
+export async function getRandomArticleIds({
+  language = 'en',
+  limit = 20,
+}: {
+  language?: string;
+  limit?: number;
+}): Promise<string[]> {
+  const randomQueryParams: Params = {
+    action: 'query',
+    format: 'json',
+    list: 'random',
+    rnnamespace: '0',
+    rnlimit: limit.toString(),
+  };
+  const params = new URLSearchParams(randomQueryParams).toString();
+  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
+  const randomData = await fetch(url).then((res) => res.json());
+
+  return randomData.query.random.map((article: { id: number }) =>
+    article.id.toString()
+  );
+}
+
+async function getTrulyRandomArticleInfo({
+  language,
+  seenArticleIds,
+}: {
+  seenArticleIds: string[];
+  language: string;
+}) {
+  const limit = 10;
+  let randomIds: string[] = [];
+
+  do {
+    const newIds = await getRandomArticleIds({ language, limit: 30 });
+    randomIds = newIds.filter((id) => !seenArticleIds.includes(id));
+  } while (randomIds.length < limit);
+
+  const articleIds = sampleSize(randomIds, limit);
+
+  return await getArticleInfoFromIds({ articleIds, language });
+}
 
 export async function getRandomArticleInfo({
   language = 'en',
@@ -22,6 +65,10 @@ export async function getRandomArticleInfo({
   );
   if (!languageData) {
     return [];
+  }
+
+  if (type === 'all') {
+    return getTrulyRandomArticleInfo({ language, seenArticleIds });
   }
 
   const featuredArticleIds = languageData.featuredArticleIds.map(String);
@@ -57,6 +104,8 @@ export function getLanguageTableData() {
     goodUrl: `/random?&language=${language.languageCode}&type=good`,
     bothUrl: `/random?&language=${language.languageCode}&type=both`,
     bothCount: language.bothCount,
+    allUrl: `/random?&language=${language.languageCode}&type=all`,
+    allCount: language.allCount,
   }));
 }
 

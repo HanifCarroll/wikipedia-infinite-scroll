@@ -11,11 +11,10 @@ export default function Home() {
   const filteredLanguages = languageTableData
     .filter(
       (language) =>
-        (language.code.toLowerCase().includes(formattedSearchTerm) ||
-          language.name.toLowerCase().includes(formattedSearchTerm)) &&
-        language.bothCount !== 0
+        language.code.toLowerCase().includes(formattedSearchTerm) ||
+        language.name.toLowerCase().includes(formattedSearchTerm)
     )
-    .sort((lang1, lang2) => lang2.bothCount - lang1.bothCount);
+    .sort((lang1, lang2) => lang2.allCount - lang1.allCount);
 
   return (
     <>
@@ -41,27 +40,33 @@ export default function Home() {
         <div className="mt-5 max-h-80 w-11/12 overflow-scroll border-y border-black md:w-4/5">
           <table className="w-full border-collapse border border-black">
             <thead>
-              <tr>
+              <tr className="tracking-wide">
                 <th>Language</th>
                 <th>Code</th>
-                <th>Featured Articles</th>
-                <th>Good Articles</th>
-                <th>Combined Articles</th>
+                <th>All</th>
+                <th>Featured</th>
+                <th>Good</th>
+                <th>Featured & Good</th>
               </tr>
             </thead>
             <tbody>
               {filteredLanguages.map((language) => (
                 <tr key={language.name} className="border border-black ">
-                  <td className="text-center">
+                  <td className="w-1/6 text-center">
                     <span>{language.name}</span>
                   </td>
                   <td className="text-center">
                     <span>{language.code}</span>
                   </td>
                   <td className="text-center">
+                    <Link href={language.allUrl}>
+                      {language.allCount.toLocaleString()}
+                    </Link>
+                  </td>
+                  <td className="text-center">
                     {language.featuredCount > 0 ? (
                       <Link href={language.featuredUrl}>
-                        {language.featuredCount}
+                        {language.featuredCount.toLocaleString()}
                       </Link>
                     ) : (
                       0
@@ -69,14 +74,18 @@ export default function Home() {
                   </td>
                   <td className="text-center">
                     {language.goodCount > 0 ? (
-                      <Link href={language.goodUrl}>{language.goodCount}</Link>
+                      <Link href={language.goodUrl}>
+                        {language.goodCount.toLocaleString()}
+                      </Link>
                     ) : (
                       0
                     )}
                   </td>
                   <td className="text-center">
                     {language.bothCount > 0 ? (
-                      <Link href={language.bothUrl}>{language.bothCount}</Link>
+                      <Link href={language.bothUrl}>
+                        {language.bothCount.toLocaleString()}
+                      </Link>
                     ) : (
                       0
                     )}

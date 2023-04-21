@@ -1,57 +1,45 @@
 import { sampleSize, shuffle } from 'lodash';
 import languageArticleInfo from './articles.json';
-import { Article, Params } from '@/utils/types';
+import {
+  ArticleInfoResponse,
+  getArticleInfoFromIds,
+  getRandomArticleIds,
+} from '@/utils/api';
 
 type RandomArticleArguments = {
   language?: 'en';
   limit?: number;
+  rncontinue?: string;
   type?: ArticleCategory;
   seenArticleIds: string[];
 };
 
 export type ArticleCategory = 'featured' | 'good' | 'both' | 'all';
 
-export async function getRandomArticleIds({
-  language = 'en',
-  limit = 20,
-}: {
-  language?: string;
-  limit?: number;
-}): Promise<string[]> {
-  const randomQueryParams: Params = {
-    action: 'query',
-    format: 'json',
-    list: 'random',
-    rnnamespace: '0',
-    rnlimit: limit.toString(),
-  };
-  const params = new URLSearchParams(randomQueryParams).toString();
-  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
-  try {
-    const randomData = await fetch(url).then((res) => res.json());
-    return randomData.query.random.map((article: { id: number }) =>
-      article.id.toString()
-    );
-  } catch (e) {
-    console.log('Error during getRandomArticleIds: ', e);
-    return [];
-  }
-}
-
 async function getTrulyRandomArticleInfo({
   language,
+  rncontinue,
   seenArticleIds,
 }: {
-  seenArticleIds: string[];
   language: string;
+  rncontinue?: string;
+  seenArticleIds: string[];
 }) {
   const limit = 30;
   let randomIds: string[] = [];
+  let rncontinueValue: string | undefined;
 
   do {
-    const newIds = await getRandomArticleIds({ language, limit: 50 });
-    const unseenIds = newIds.filter((id) => !seenArticleIds.includes(id));
-    if (unseenIds.length === 0 || newIds.length === 0) {
+    const randomResult = await getRandomArticleIds({
+      language,
+      limit: 50,
+      rncontinue,
+    });
+    rncontinueValue = randomResult.rncontinue;
+    const unseenIds = randomResult.randomArticleIds.filter(
+      (id) => !seenArticleIds.includes(id)
+    );
+    if (unseenIds.length === 0 || randomResult.randomArticleIds.length === 0) {
       break;
     }
     randomIds = randomIds.concat(unseenIds);
@@ -59,12 +47,16 @@ async function getTrulyRandomArticleInfo({
   } while (randomIds.length < limit);
 
   if (randomIds.length === 0) {
-    return [];
+    return { articleInfo: [] };
   }
 
   const articleIds = sampleSize(randomIds, limit);
 
-  return await getArticleInfoFromIds({ articleIds, language });
+  return await getArticleInfoFromIds({
+    articleIds,
+    language,
+    rncontinue: rncontinueValue,
+  });
 }
 
 function sleep(seconds: number) {
@@ -74,19 +66,20 @@ function sleep(seconds: number) {
 
 export async function getRandomArticleInfo({
   language = 'en',
-  type = 'featured',
+  rncontinue,
   seenArticleIds,
-}: RandomArticleArguments) {
+  type = 'featured',
+}: RandomArticleArguments): Promise<ArticleInfoResponse> {
   const limit = 10;
   const languageData = languageArticleInfo.find(
     (lang) => lang.languageCode === language
   );
   if (!languageData) {
-    return [];
+    return { articleInfo: [] };
   }
 
   if (type === 'all') {
-    return getTrulyRandomArticleInfo({ language, seenArticleIds });
+    return getTrulyRandomArticleInfo({ language, rncontinue, seenArticleIds });
   }
 
   const featuredArticleIds = languageData.featuredArticleIds.map(String);
@@ -101,7 +94,7 @@ export async function getRandomArticleInfo({
     (id) => !seenArticleIds.includes(id)
   );
   if (!unseenArticleIds.length) {
-    return [];
+    return { articleInfo: [] };
   }
 
   const randomArticleIds = sampleSize(shuffle(unseenArticleIds), limit);
@@ -133,36 +126,3 @@ export const languageCodes = languageArticleInfo.map(
     code: languageCode,
   })
 );
-
-export async function getArticleInfoFromIds({
-  articleIds,
-  language = 'en',
-}: {
-  articleIds: string[];
-  language?: string;
-}): Promise<Article[]> {
-  if (!articleIds.length) {
-    return [];
-  }
-
-  const infoQueryParams: Params = {
-    action: 'query',
-    format: 'json',
-    exintro: 'true',
-    explaintext: 'true',
-    inprop: 'url|displaytitle|preload',
-    pageids: articleIds.join('|'),
-    pithumbsize: '220',
-    prop: 'extracts|pageimages|info',
-    redirects: '1',
-  };
-  const params = new URLSearchParams(infoQueryParams).toString();
-  const url = `https://${language}.wikipedia.org/w/api.php?origin=*&${params}`;
-  const articleData = await fetch(url)
-    .then((res) => res.json())
-    .catch((err) => console.log('err', err));
-
-  return articleData?.query?.pages
-    ? Object.values(articleData.query.pages)
-    : [];
-}

@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Article } from '@/utils/types';
 import { ArticleCategory, getRandomArticleInfo } from '@/utils/utils';
+import { ArticleInfoResponse } from '@/utils/api';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Article[]>
+  res: NextApiResponse<ArticleInfoResponse>
 ) {
   if (req.method !== 'POST') {
     return res.status(501);
@@ -13,10 +13,12 @@ export default async function handler(
   const language = String(req.body.language) as never;
   const type = String(req.body.articleType) as ArticleCategory;
   const seenArticleIds: string[] = req.body.seenArticleIds.map(String);
+  const rncontinue = req.body.rncontinue;
   const articleInfo = await getRandomArticleInfo({
     language,
-    type,
+    rncontinue,
     seenArticleIds,
+    type,
   });
   return res.status(200).json(articleInfo);
 }

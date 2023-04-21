@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
 import { ArticleList } from '@/components/ArticleList';
 import { Header } from '@/components/Header';
-import { Article, Language } from '@/utils/types';
+import { ArticleInfoResponse } from '@/utils/api';
+import { Language } from '@/utils/types';
 import {
   ArticleCategory,
   getRandomArticleInfo,
@@ -11,7 +12,7 @@ import {
 } from '@/utils/utils';
 
 type HomeProps = {
-  articles: Article[];
+  articles: ArticleInfoResponse;
   languages: Language[];
 };
 
@@ -22,13 +23,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   ).toLocaleLowerCase() as ArticleCategory;
 
   if (languageCodes.find((language) => language.code === requestedLanguage)) {
+    const articles = await getRandomArticleInfo({
+      language: requestedLanguage as never,
+      type,
+      seenArticleIds: [],
+    });
     return {
       props: {
-        articles: await getRandomArticleInfo({
-          language: requestedLanguage as never,
-          type,
-          seenArticleIds: [],
-        }),
+        articles,
       },
     };
   }

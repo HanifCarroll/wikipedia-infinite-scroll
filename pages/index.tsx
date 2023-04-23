@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Header } from '@/components/Header';
 import Link from 'next/link';
-import { getLanguageTableData } from '@/utils/utils';
+import { getLanguageTableData } from '@/lib/utils/utils';
 import { useState } from 'react';
 
 export default function Home() {

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { ArticleCategory, getRandomArticleInfo } from '@/utils/utils';
-import { ArticleInfoResponse } from '@/utils/api';
+import { ArticleCategory, getRandomArticleInfo } from '@/lib/utils/utils';
+import { ArticleInfoResponse } from '@/lib/utils/api';
 
 export default async function handler(
   req: NextApiRequest,

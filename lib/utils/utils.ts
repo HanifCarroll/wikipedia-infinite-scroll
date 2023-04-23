@@ -4,7 +4,7 @@ import {
   ArticleInfoResponse,
   getArticleInfoFromIds,
   getRandomArticleIds,
-} from '@/utils/api';
+} from '@/lib/utils/api';
 
 type RandomArticleArguments = {
   language?: 'en';

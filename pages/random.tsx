@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
 import { ArticleList } from '@/components/ArticleList';
 import { Header } from '@/components/Header';
-import { ArticleInfoResponse } from '@/utils/api';
-import { Language } from '@/utils/types';
+import { ArticleInfoResponse } from '@/lib/utils/api';
+import { Language } from '@/lib/utils/types';
 import {
   ArticleCategory,
   getRandomArticleInfo,
   languageCodes,
-} from '@/utils/utils';
+} from '@/lib/utils/utils';
 
 type HomeProps = {
   articles: ArticleInfoResponse;

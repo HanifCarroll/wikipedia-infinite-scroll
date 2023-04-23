@@ -13,7 +13,7 @@ export type Article = z.infer<typeof Article>;
 export function createArticle(data: any) {
   const result = Article.safeParse({
     pageId: String(data.pageid),
-    summary: data.extract,
+    summary: data.extract ?? '',
     thumbnailUrl: data.thumbnail?.source ?? '/placeholder.png',
     // Some titles have HTML tags that need to be removed.
     title: data.displaytitle.replace(/<[^>]+>/g, ''),

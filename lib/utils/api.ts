@@ -1,4 +1,5 @@
-import { Article, Params } from '@/utils/types';
+import { Params } from '@/lib/utils/types';
+import { Article, createArticle } from '@/lib/domain/Article';
 
 type RandomArticleIdResult = {
   randomArticleIds: string[];
@@ -86,7 +87,9 @@ export async function getArticleInfoFromIds({
     return { articleInfo: [] };
   }
 
-  const articleInfo: Article[] = Object.values(articleData.query.pages);
+  const articleInfo: Article[] = Object.values(articleData.query.pages).map(
+    createArticle
+  );
   const result: ArticleInfoResponse = {
     articleInfo,
   };

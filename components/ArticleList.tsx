@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ArticleSummary } from '@/components/ArticleSummary';
-import { Article } from '@/utils/types';
+import { Article } from '@/lib/domain/Article';
 import { Loader } from '@/components/Loader';
 import { NoMoreArticles } from '@/components/NoMoreArticles';
-import { ArticleInfoResponse } from '@/utils/api';
+import { ArticleInfoResponse } from '@/lib/utils/api';
 
 type ArticleListProps = {
   articles: ArticleInfoResponse;
@@ -21,7 +21,7 @@ export function ArticleList({
   );
   const [isError, setIsError] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const seenArticleIds = allArticles.map((article) => article.pageid);
+  const seenArticleIds = allArticles.map((article) => article.pageId);
   const [rncontinue, setRncontinue] = useState('');
   const getData = async () => {
     setIsError(false);
@@ -48,9 +48,9 @@ export function ArticleList({
           return;
         }
         setRncontinue(newRncontinue);
-        const oldArticleIds = allArticles.map((article) => article.pageid);
+        const oldArticleIds = allArticles.map((article) => article.pageId);
         const articlesToAdd = newArticleData.filter(
-          (article: Article) => !oldArticleIds.includes(article.pageid)
+          (article: Article) => !oldArticleIds.includes(article.pageId)
         );
         setAllArticles([...allArticles, ...articlesToAdd]);
         setIsError(false);
@@ -72,12 +72,11 @@ export function ArticleList({
       <div className="flex flex-col items-center space-y-10">
         {allArticles.map((article) => (
           <ArticleSummary
-            key={article.pageid}
-            thumbnail={article.thumbnail?.source}
-            // Some titles have HTML tags that need to be removed.
-            title={article.displaytitle.replace(/<[^>]+>/g, '')}
-            summary={article.extract}
-            url={article.canonicalurl}
+            key={article.pageId}
+            thumbnailUrl={article.thumbnailUrl}
+            title={article.title}
+            summary={article.summary}
+            url={article.url}
           />
         ))}
       </div>

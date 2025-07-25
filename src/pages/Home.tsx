@@ -37,10 +37,18 @@ export default function Home() {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="bg-white dark:bg-gray-900 py-20 px-4 border-b border-gray-100 dark:border-gray-800">
-          <div className="max-w-4xl mx-auto text-center">
+        <div className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-950/20 py-20 px-4 border-b border-gray-100 dark:border-gray-800 overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-70 dark:opacity-40">
+            <div className="absolute top-10 left-10 w-44 h-44 bg-blue-200/80 dark:bg-blue-700/50 rounded-full blur-xl animate-[float-1_20s_ease-in-out_infinite]"></div>
+            <div className="absolute top-40 right-20 w-32 h-32 bg-indigo-200/80 dark:bg-indigo-700/50 rounded-full blur-xl animate-[float-2_25s_ease-in-out_infinite_reverse]"></div>
+            <div className="absolute bottom-20 left-1/3 w-28 h-28 bg-purple-200/80 dark:bg-purple-700/50 rounded-full blur-xl animate-[float-3_30s_ease-in-out_infinite]"></div>
+            <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-cyan-200/80 dark:bg-cyan-700/50 rounded-full blur-xl animate-[float-4_18s_ease-in-out_infinite_reverse]"></div>
+          </div>
+          
+          <div className="relative max-w-4xl mx-auto text-center">
             <div className="mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 dark:bg-blue-950/30 rounded-2xl mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl mb-6 shadow-lg border border-white/20 dark:border-gray-700/50">
                 <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>

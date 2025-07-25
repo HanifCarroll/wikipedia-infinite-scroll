@@ -53,6 +53,7 @@ export type ArticleInfoResponse = {
   articleInfo: Article[];
   rncontinue?: string;
 };
+
 export async function getArticleInfoFromIds({
   articleIds,
   language = 'en',

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArticleCategory, languageCodes } from '../lib/utils/utils.ts';
 import { ArticleList } from '../components/ArticleList.tsx';
 import { Header } from '../components/Header.tsx';
+import { Footer } from '../components/Footer.tsx';
 
 export default function RandomArticles() {
   const navigate = useNavigate();
@@ -24,14 +25,18 @@ export default function RandomArticles() {
 
   const languageName = language.name;
   const languageCode = language.code;
+  const articleType = String(searchParams.get('type')) as ArticleCategory;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header language={languageName} />
-      <ArticleList
-        articleType={String(searchParams.get('type')) as ArticleCategory}
-        language={languageCode}
-      />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <Header language={languageName} articleType={articleType} />
+      <main className="flex-1">
+        <ArticleList
+          articleType={articleType}
+          language={languageCode}
+        />
+      </main>
+      <Footer />
     </div>
   );
 }

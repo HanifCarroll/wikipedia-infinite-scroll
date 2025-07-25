@@ -2,8 +2,11 @@ import { Link} from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { useState, useEffect } from 'react';
 import { SavedArticlesService } from '../lib/services/SavedArticlesService';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { TypeSwitcher } from './TypeSwitcher';
+import { ArticleCategory } from '../lib/utils/utils';
 
-export function Header({ language }: { language?: string }) {
+export function Header({ language, articleType }: { language?: string; articleType?: ArticleCategory }) {
   const { theme, toggleTheme } = useTheme();
   const [savedCount, setSavedCount] = useState(0);
 
@@ -46,9 +49,12 @@ export function Header({ language }: { language?: string }) {
           </Link>
           <div className="flex items-center gap-4">
             {language && (
-              <span className="text-lg font-medium text-gray-700 bg-gray-100 px-4 py-1 rounded-full dark:text-gray-200 dark:bg-gray-800">
-                {language}
-              </span>
+              <div className="flex items-center gap-2">
+                <LanguageSwitcher currentLanguage={language} />
+                {articleType && (
+                  <TypeSwitcher currentType={articleType} />
+                )}
+              </div>
             )}
             <Link
               to="/saved"

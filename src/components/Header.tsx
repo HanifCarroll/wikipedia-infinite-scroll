@@ -48,7 +48,7 @@ export function Header({ language, articleType }: { language?: string; articleTy
             <img 
               src="/favicon.ico" 
               alt="Home" 
-              className="w-12 h-12 hover:opacity-80 transition-opacity duration-200"
+              className="w-8 h-8 hover:opacity-80 transition-opacity duration-200"
             />
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">

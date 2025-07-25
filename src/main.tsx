@@ -6,6 +6,10 @@ import Home from './pages/Home.tsx';
 import RandomArticles from './pages/RandomArticles.tsx';
 import SavedArticles from './pages/SavedArticles.tsx';
 import { ThemeProvider } from './contexts/ThemeContext.tsx';
+import Clarity from '@microsoft/clarity';
+
+// Microsoft Clarity analytics
+Clarity.init("skg8giac4r");
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },

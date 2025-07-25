@@ -9,7 +9,8 @@ import { ThemeProvider } from './contexts/ThemeContext.tsx';
 import Clarity from '@microsoft/clarity';
 
 // Microsoft Clarity analytics
-Clarity.init("skg8giac4r");
+const projectId = "skg8giac4r" 
+Clarity.init(projectId);
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },

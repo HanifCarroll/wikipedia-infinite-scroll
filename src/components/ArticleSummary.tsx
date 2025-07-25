@@ -59,25 +59,27 @@ export function ArticleSummary({
       target="_blank"
       rel="noopener noreferrer"
     >
-      <div className="article-card flex flex-col md:flex-row">
+      <div className="article-card flex flex-col md:flex-row py-4 md:py-0">
         {thumbnailUrl && (
-          <div className="md:w-1/3 overflow-hidden">
-            <img 
-              className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-              src={thumbnailUrl} 
-              alt={title}
-              loading="lazy"
-            />
+          <div className="md:w-1/3 bg-gray-100 dark:bg-gray-800">
+            <div className="relative h-56 sm:h-64 md:h-full flex items-center justify-center overflow-hidden px-4 md:p-0">
+              <img 
+                className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300" 
+                src={thumbnailUrl} 
+                alt={title}
+                loading="lazy"
+              />
+            </div>
           </div>
         )}
-        <div className={`flex-1 p-6 ${thumbnailUrl ? 'md:w-2/3' : ''}`}>
-          <div className="flex items-start justify-between mb-3">
-            <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 dark:text-gray-100 dark:group-hover:text-blue-400 flex-1 pr-3">
+        <div className={`flex-1 px-6 pt-4 md:p-6 ${thumbnailUrl ? 'md:w-2/3' : ''}`}>
+          <div className="flex items-start justify-between mb-3 gap-2">
+            <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 dark:text-gray-100 dark:group-hover:text-blue-400 flex-1">
               {title}
             </h2>
             <button
               onClick={handleBookmarkClick}
-              className={`p-2 rounded-lg transition-colors flex-shrink-0 ${
+              className={`p-1.5 rounded-lg transition-colors flex-shrink-0 -mt-0.5 ${
                 isSaved 
                   ? 'text-yellow-500 hover:text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20' 
                   : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-500 dark:hover:text-gray-300 dark:hover:bg-gray-700'

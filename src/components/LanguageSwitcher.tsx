@@ -40,15 +40,20 @@ export function LanguageSwitcher({ currentLanguage }: LanguageSwitcherProps) {
     return a.name.localeCompare(b.name);
   });
 
+  const currentLanguageData = languageCodes.find(lang => lang.name === currentLanguage);
+  const displayText = currentLanguageData ? currentLanguageData.name : currentLanguage;
+  const displayCode = currentLanguageData ? currentLanguageData.code : currentLanguage;
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="text-lg font-medium text-gray-700 bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 cursor-pointer transition-colors dark:text-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 flex items-center gap-1"
+        className="text-sm font-medium text-gray-700 bg-gray-100 px-3 py-2 rounded-full hover:bg-gray-200 cursor-pointer transition-colors dark:text-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 flex items-center gap-1"
       >
-        {currentLanguage}
+        <span className="hidden sm:inline">{displayText}</span>
+        <span className="sm:hidden">{displayCode}</span>
         <svg 
-          className={`w-4 h-4 opacity-60 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
+          className={`w-3 h-3 opacity-60 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"

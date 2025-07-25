@@ -40,7 +40,7 @@ export function TypeSwitcher({ currentType }: TypeSwitcherProps) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="text-sm font-medium text-blue-700 bg-blue-100 px-3 py-2 rounded-full hover:bg-blue-200 cursor-pointer transition-colors dark:text-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 flex items-center gap-1"
+        className="text-sm font-medium text-gray-700 bg-gray-100 px-3 py-2 rounded-full hover:bg-gray-200 cursor-pointer transition-colors dark:text-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 flex items-center gap-1"
       >
         {currentTypeLabel}
         <svg 

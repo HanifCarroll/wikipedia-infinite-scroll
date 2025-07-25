@@ -40,7 +40,7 @@ export function ArticleSummary({
       title,
       summary: summary || '',
       url,
-      thumbnailUrl,
+      thumbnailUrl: thumbnailUrl || '',
     };
 
     if (isSaved) {

@@ -38,7 +38,7 @@ export function Header({ language, articleType }: { language?: string; articleTy
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 backdrop-blur-md bg-white/90 shadow-md dark:bg-gray-900/90 dark:shadow-gray-950/20">
+    <header className="sticky top-0 z-20 backdrop-blur-md bg-white/90 shadow-md dark:bg-gray-800/95 dark:shadow-black/30 border-b border-transparent dark:border-gray-700/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link 

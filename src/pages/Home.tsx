@@ -101,11 +101,9 @@ export default function Home() {
                   allCount={language.allCount}
                   featuredCount={language.featuredCount}
                   goodCount={language.goodCount}
-                  bothCount={language.bothCount}
                   allUrl={language.allUrl}
                   featuredUrl={language.featuredUrl}
                   goodUrl={language.goodUrl}
-                  bothUrl={language.bothUrl}
                 />
               ))}
             </div>
@@ -165,11 +163,9 @@ export default function Home() {
                     allCount={language.allCount}
                     featuredCount={language.featuredCount}
                     goodCount={language.goodCount}
-                    bothCount={language.bothCount}
                     allUrl={language.allUrl}
                     featuredUrl={language.featuredUrl}
                     goodUrl={language.goodUrl}
-                    bothUrl={language.bothUrl}
                     isCompact={true}
                   />
                 ))}

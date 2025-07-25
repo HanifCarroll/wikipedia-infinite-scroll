@@ -9,7 +9,6 @@ type TypeSwitcherProps = {
 const articleTypes = [
   { value: 'featured' as ArticleCategory, label: 'Featured', description: 'Wikipedia\'s finest articles' },
   { value: 'good' as ArticleCategory, label: 'Good', description: 'High-quality articles' },
-  { value: 'both' as ArticleCategory, label: 'Featured & Good', description: 'Best quality articles' },
   { value: 'all' as ArticleCategory, label: 'All', description: 'Random Wikipedia articles' },
 ];
 

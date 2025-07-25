@@ -4,11 +4,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import Home from './pages/Home.tsx';
 import RandomArticles from './pages/RandomArticles.tsx';
+import SavedArticles from './pages/SavedArticles.tsx';
 import { ThemeProvider } from './contexts/ThemeContext.tsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },
   { path: '/random', element: <RandomArticles /> },
+  { path: '/saved', element: <SavedArticles /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

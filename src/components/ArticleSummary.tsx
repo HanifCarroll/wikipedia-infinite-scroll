@@ -1,8 +1,13 @@
+import { useState, useEffect } from 'react';
+import { SavedArticlesService } from '../lib/services/SavedArticlesService';
+import { Article } from '../lib/domain/Article';
+
 type ArticleSummaryProps = {
   summary?: string;
   thumbnailUrl?: string;
   title: string;
   url: string;
+  pageId: string;
 };
 
 export function ArticleSummary({
@@ -10,7 +15,14 @@ export function ArticleSummary({
   thumbnailUrl,
   title,
   url,
+  pageId,
 }: ArticleSummaryProps) {
+  const [isSaved, setIsSaved] = useState(false);
+  
+  useEffect(() => {
+    setIsSaved(SavedArticlesService.isArticleSaved(pageId));
+  }, [pageId]);
+
   const summaryCharacterLimit = 400;
   if (summary && summary.length > summaryCharacterLimit) {
     const lastPeriodIndex = summary.lastIndexOf('.', summaryCharacterLimit);
@@ -18,6 +30,27 @@ export function ArticleSummary({
       lastPeriodIndex === -1 ? summaryCharacterLimit : lastPeriodIndex;
     summary = summary.slice(0, endIndex + 1);
   }
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const article: Article = {
+      pageId,
+      title,
+      summary: summary || '',
+      url,
+      thumbnailUrl,
+    };
+
+    if (isSaved) {
+      SavedArticlesService.unsaveArticle(pageId);
+      setIsSaved(false);
+    } else {
+      SavedArticlesService.saveArticle(article);
+      setIsSaved(true);
+    }
+  };
 
   return (
     <a 
@@ -39,9 +72,22 @@ export function ArticleSummary({
         )}
         <div className={`flex-1 p-6 ${thumbnailUrl ? 'md:w-2/3' : ''}`}>
           <div className="flex items-start justify-between mb-3">
-            <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 dark:text-gray-100 dark:group-hover:text-blue-400">
+            <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 dark:text-gray-100 dark:group-hover:text-blue-400 flex-1 pr-3">
               {title}
             </h2>
+            <button
+              onClick={handleBookmarkClick}
+              className={`p-2 rounded-lg transition-colors flex-shrink-0 ${
+                isSaved 
+                  ? 'text-yellow-500 hover:text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20' 
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-500 dark:hover:text-gray-300 dark:hover:bg-gray-700'
+              }`}
+              title={isSaved ? 'Remove from saved articles' : 'Save article'}
+            >
+              <svg className="w-5 h-5" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </button>
           </div>
           
           <p className="text-gray-600 leading-relaxed line-clamp-3 mb-4 dark:text-gray-300">

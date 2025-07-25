@@ -44,6 +44,7 @@ export function ArticleList({ articleType, language }: ArticleListProps) {
               title={article.title}
               summary={article.summary}
               url={article.url}
+              pageId={article.pageId}
             />
           </div>
         ))}

@@ -21,8 +21,7 @@ export function useArticleListUtils({
         seenArticleIds,
         type: articleType,
       });
-      const { articleInfo: newArticleData, rncontinue: newRncontinue } =
-        await data;
+      const { articleInfo: newArticleData, rncontinue: newRncontinue } = data;
       if (newArticleData.length === 0) {
         setHasMore(false);
         return;

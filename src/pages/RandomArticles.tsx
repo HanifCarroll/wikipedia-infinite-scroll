@@ -26,12 +26,12 @@ export default function RandomArticles() {
   const languageCode = language.code;
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header language={languageName} />
       <ArticleList
         articleType={String(searchParams.get('type')) as ArticleCategory}
         language={languageCode}
       />
-    </>
+    </div>
   );
 }
